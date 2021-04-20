@@ -3,6 +3,9 @@ kasusnya jika ada pilihan yang memungkinkan "PILIHAN" ada jika di butuhkan maka 
 
 - pastikan model inputanya adalah sebuah option,dropdwon,radio button
 - tambahakan atribut pada tag componen option tersebut onchange='namaFunction()'
+```javascript
+onchange='CheckColors(this.value);'
+```
 - buat inputan (hide) untuk sebagai option jawaban yang jika di butuhkan seperti pada gambar dibawah ini :
 ```HTML
 <input type="text" name="color" id="color" style='display:none;'/>
