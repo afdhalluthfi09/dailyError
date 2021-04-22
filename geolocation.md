@@ -36,7 +36,7 @@ langsung saja:
 - harus registrasi ke google developer untuk mendaptak akses token google map
 - kedua ambil cdn seperti dibawah ini :
 ```
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDefTbQnamCIdly1uRvtxmxeo2K-__H2TE&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=TOKEN_ANDA&callback=initMap"
 		async defer></script>
 ```
 setelah itu lakukan inisialisasi  seperti langkah berikut :
