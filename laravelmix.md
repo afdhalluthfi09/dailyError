@@ -110,5 +110,4 @@ artinsa data yang kita fecth sudah berahsil tapi pengembalinya belum seperuna.
         .catch((err)=>{
             console.log(err);
         })
-
 ```
