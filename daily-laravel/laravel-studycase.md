@@ -37,3 +37,19 @@ pada code di atas terjadi kesalahan ekpsetasi dari filed table yang dimana hasil
 * pastikan type data yang di kembalikan saat menggunakan builder function faker.
 
 dengan begitu permasalahan yang bisa diekatuhi solvnya.
+
+###### menangkap error dengan log.
+
+Untuk mencatat log kesalahan yang terkait dengan masalah CORS di Laravel, Anda dapat menggunakan fungsi `Log::error()` untuk mencatat pesan kesalahan ke file log aplikasi Laravel. Anda dapat menambahkan baris kode berikut di dalam blok `catch` pada bagian kode yang menangani permintaan Anda:
+
+```php
+catch (\Throwable $th) {
+    DB::rollBack();
+    Log::error('Error saat memproses permintaan: ' . $th->getMessage());
+    return response()->json(["message" => $th->getMessage()]);
+}
+```
+
+Dengan cara ini, ketika terjadi kesalahan dalam memproses permintaan, pesan kesalahan akan dicatat ke file log aplikasi Laravel, dan Anda dapat melihatnya di file log yang sesuai. Biasanya, log kesalahan akan disimpan di file `storage/logs/laravel.log` atau sesuai dengan konfigurasi log Anda.
+
+Dengan mencatat log kesalahan seperti ini, Anda dapat memeriksa log aplikasi Laravel untuk melacak apakah ada masalah CORS yang menyebabkan kesalahan di sisi server saat permintaan dilakukan dari admin.e-laundry.site. Jika ada masalah CORS, Anda akan melihat pesan kesalahan terkait dalam log, dan dari situ Anda dapat mencari solusi untuk mengatasi masalah tersebut.
