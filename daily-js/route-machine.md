@@ -1,4 +1,6 @@
-# route machine leaflet js
+# Daily JS
+
+###### Route Machine JS
 
 ini adalah base template jika ingin menggunakan routmachine dengan javascript.
 maka dari itu sediakan dua hal untuk bisa menjalankannya
@@ -47,4 +49,66 @@ maka dari itu sediakan dua hal untuk bisa menjalankannya
     </script>
 </body>
 </html>
+```
+
+###### menangkap pesana errorr dengan fetch pada sisi client.
+
+kita cukup menggunakan try catch unutk menangkap error yang terjadi pada sisi client
+
+```javascript
+async function addData(inputData){
+
+        try {
+            let headersList = {
+                "Accept": "application/json",
+                "Authorization":`Bearer ${csrf.data('session')}`,
+                "Content-Type":"application/json",
+                "withCredentials":true
+            }
+            const response = await fetch(`${import.meta.env.VITE_URL_LOKAL}/employee`,{
+                method:'POST',
+                body:JSON.stringify(inputData),
+                headers:headersList
+            })
+
+            const data  = await response.json();
+
+            if(response.ok){
+                console.log(data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Data Updated',
+                    text: data.message,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        instanceEmployee.ajax.reload()
+                    }
+                });
+            }else{
+                let errors =data.errors;
+                let errorMessages='';
+                for(let index in errors){
+                    errorMessages += errors[index]+'<br>';
+                }
+                Swal.fire({
+                    icon: 'warning',
+                    title: data.message,
+                    html:errorMessages,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        instanceEmployee.ajax.reload()
+                    }
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: error,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    instanceEmployee.ajax.reload()
+                }
+            });
+        }
+    }
 ```

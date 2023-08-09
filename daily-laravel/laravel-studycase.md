@@ -53,3 +53,24 @@ catch (\Throwable $th) {
 Dengan cara ini, ketika terjadi kesalahan dalam memproses permintaan, pesan kesalahan akan dicatat ke file log aplikasi Laravel, dan Anda dapat melihatnya di file log yang sesuai. Biasanya, log kesalahan akan disimpan di file `storage/logs/laravel.log` atau sesuai dengan konfigurasi log Anda.
 
 Dengan mencatat log kesalahan seperti ini, Anda dapat memeriksa log aplikasi Laravel untuk melacak apakah ada masalah CORS yang menyebabkan kesalahan di sisi server saat permintaan dilakukan dari admin.e-laundry.site. Jika ada masalah CORS, Anda akan melihat pesan kesalahan terkait dalam log, dan dari situ Anda dapat mencari solusi untuk mengatasi masalah tersebut.
+
+###### menggunakan index looping dari foreach untuk pengurutan nomor.
+
+```php
+@forelse ($costumer as $item)
+                <tr>
+                    <td>{{$loop->index +1}}</td>
+                    <td>{{$item['name']}}</td>
+                    <td>{{$item['email']}}</td>
+                    <td>{{$item['address']}}</td>
+                    <td>{{$item['address']}}</td>
+                    <td>{{$item['age']}}</td>
+                    <td>{{$item['location']}}</td>
+                    <td><button class="btn btn-edit btn-success p-2">Edit</button></td>
+                </tr>
+            @empty
+                <tr>belum adad</tr>
+            @endforelse
+```
+
+pada tempalte foreac pada blade ada fitur yang namanya $loop dimana kita bisa manggil didalamnya index array hasil pecahan dari perulangan
