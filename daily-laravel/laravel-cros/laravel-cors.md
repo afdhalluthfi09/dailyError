@@ -1,4 +1,4 @@
-# Laravel-Cros
+# rLaravel-Cros
 
 kasus yang saya alami ini adalah terjadinya cros perizinan dari permintaan client server ke backend (server restApi) dimana client tidak bisa menambil data di karenakan header data yang di ada di respon api tidak ketahui oleh pihak client bentuk header restApi:
 
@@ -138,8 +138,6 @@ pada saat kasus ini terjadi,saya menggunakan laravel sebagai base framework proj
 * 
 
 ###### memastika bahwa header CORS 'Access-Control-Allow-Origin' sudah ada dalam respons dari server API.
-
-
 
 Untuk memastikan bahwa header CORS 'Access-Control-Allow-Origin' sudah ada dalam respons dari server API, Anda dapat melakukan langkah-langkah berikut:
 
