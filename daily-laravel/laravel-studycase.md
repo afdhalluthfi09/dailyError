@@ -137,3 +137,52 @@ try {
 ```
 
 Dengan menggunakan `try-catch`, Anda dapat dengan lebih baik menangani masalah yang mungkin terjadi selama permintaan HTTP dan memberikan tanggapan yang lebih baik kepada pengguna atau mengambil tindakan yang sesuai dalam situasi yang tidak diharapkan.
+
+###### cara konfig path image terpisah dari dalam folder projct:
+
+pergi folder `config/filesystem.php` lalu tambahkan barisan ini.
+
+```php
+'disks' => [
+        'parent_disk' => [
+            'driver' => 'local',
+            'root' => __DIR__ .'/../../image-sekolahskill/', //buat folder dengan posisi yang sama dengan folder project yang sedang aktive
+            'permissions' => [
+                'file' => [
+                    'public' => 0644,
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0700,
+                ],
+            ],
+            'visibility' => 'public',
+            'throw' => true,
+        ],
+        'parent_prod' => [
+            'driver' => 'local',
+            'root' => __DIR__ .'/../../image.sekolahskill.com/',
+            'permissions' => [
+                'file' => [
+                    'public' => 0644,
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0777,
+                    'private' => 0700,
+                ],
+            ],
+            'visibility' => 'public',
+            'throw' => true,
+        ],
+//barisan code lainnya..
+```
+
+saat di controller untuk menyimpan gambar berikut pemanggilanya:
+
+```php
+$fileName =str_replace(" ","_",$request->gambar->getClientOriginalName());
+$path = $request->gambar->storeAs('kelas',$fileName,'parent_disk');
+YourModel::create(["image"=>$path])->save();
+```
