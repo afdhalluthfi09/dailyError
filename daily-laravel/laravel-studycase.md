@@ -186,3 +186,62 @@ $fileName =str_replace(" ","_",$request->gambar->getClientOriginalName());
 $path = $request->gambar->storeAs('kelas',$fileName,'parent_disk');
 YourModel::create(["image"=>$path])->save();
 ```
+
+###### cara menghandle exception  yang baik.
+
+```mermaid
+sequenceDiagram
+  participant Client as Client
+  participant Endpoint as Endpoint
+  participant Controller as Controller
+  participant Repository as Repository
+
+  Client->>Endpoint: Send Request with $param
+  Endpoint->>Controller: Call update($param)
+  Controller->>Repository: Call update($param)
+  alt Record Found
+    Repository->>+Model: Retrieve Record
+    alt Record Exists
+      Model-->>-Repository: Updated Record
+      Repository->>Controller: Return Updated Record
+      Controller->>Endpoint: Return JSON Response
+      Endpoint->>Client: Receive JSON Response
+    else Record Does Not Exist
+      Repository->>Controller: Return Null
+      Controller->>Endpoint: Return Error JSON Response
+      Endpoint->>Client: Receive Error JSON Response
+    end
+  else Record Not Found
+    Controller->>Endpoint: Return Error JSON Response
+    Endpoint->>Client: Receive Error JSON Response
+  end
+```
+
+* buat try cath di repository
+
+  ```php
+  public function getBySlug($slug){
+          try {
+              //code...
+              $teacher =$this->bySlug($slug);
+              return new ResourcesTeacher($teacher);
+          } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+              //throw $th;
+              return null;
+          }
+
+      }
+  ```
+  buat logic di controller seperti :
+* lalu buat message di controller.
+
+  ```php
+  public function updateSlug ($id)
+      {
+          $record =$this->teacher->updateById($id);
+          if(!$record){
+              return response()->json(["message"=>"data tidak ada"],Response::HTTP_NOT_FOUND);
+          }
+          return response()->json(["message"=>"data berhasil di update"],Response::HTTP_ACCEPTED);
+      }
+  ```
