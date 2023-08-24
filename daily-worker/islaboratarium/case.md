@@ -53,7 +53,7 @@ public function hari($tanggal){
                 $hari_ini = "Minggu";
             break;
    
-            case 'Mon':	
+            case 'Mon':
                 $hari_ini = "Senin";
             break;
    
@@ -76,7 +76,7 @@ public function hari($tanggal){
             case 'Sat':
                 $hari_ini = "Sabtu";
             break;
-        
+      
             default:
                 $hari_ini = "Tidak di ketahui";
             break;
@@ -257,3 +257,14 @@ $sheet->setCellValue('I2', 'Shift')
 ##### menghitung jumlah hari pada bulan di php
 
 `cal_days_in_month(CAL_GREGORIAN, $month, $year);`
+
+```
+$data = $conn->setConnection($this->db)->join('category_sample','parameter.category_sample','=','category_sample.id')
+                ->leftJoin('users','parameter.add_by','=','users.id')
+                ->leftJoin('category_value', 'parameter.sub_category', '=', 'category_value.id')
+                ->select('parameter.*','category_sample.name as nama_cat','category_sample.id as id_category','users.nama_lengkap as nama_orang', 'satuan', 'method', 'category_value.name as nama_value', 'nilai_minimum', 'nilai_ketidak_pastian')
+                ->where('parameter.active', $request->active)
+                ->where('category_sample.id', $request->category)
+                ->where('category_value.id', $request->sub_category)
+                ->get();
+```
