@@ -76,7 +76,7 @@ public function hari($tanggal){
             case 'Sat':
                 $hari_ini = "Sabtu";
             break;
-      
+    
             default:
                 $hari_ini = "Tidak di ketahui";
             break;
@@ -258,7 +258,9 @@ $sheet->setCellValue('I2', 'Shift')
 
 `cal_days_in_month(CAL_GREGORIAN, $month, $year);`
 
-```
+##### merubah effesien query pengecekan request ketika ada kondisi where :
+
+```php
 $data = $conn->setConnection($this->db)->join('category_sample','parameter.category_sample','=','category_sample.id')
                 ->leftJoin('users','parameter.add_by','=','users.id')
                 ->leftJoin('category_value', 'parameter.sub_category', '=', 'category_value.id')
@@ -267,4 +269,34 @@ $data = $conn->setConnection($this->db)->join('category_sample','parameter.categ
                 ->where('category_sample.id', $request->category)
                 ->where('category_value.id', $request->sub_category)
                 ->get();
+```
+
+menjadi :
+
+```php
+$data = $conn->setConnection($this->db)
+    ->join('category_sample', 'parameter.category_sample', '=', 'category_sample.id')
+    ->leftJoin('users', 'parameter.add_by', '=', 'users.id')
+    ->leftJoin('category_value', 'parameter.sub_category', '=', 'category_value.id')
+    ->select(
+        'parameter.*',
+        'category_sample.name as nama_cat',
+        'category_sample.id as id_category',
+        'users.nama_lengkap as nama_orang',
+        'satuan', 'method',
+        'category_value.name as nama_value',
+        'nilai_minimum',
+        'nilai_ketidak_pastian'
+    )
+    ->when($request->has('active'), function ($query) use ($request) {
+        return $query->where('parameter.active', $request->active);
+    })
+    ->when($request->has('category'), function ($query) use ($request) {
+        return $query->where('category_sample.id', $request->category);
+    })
+    ->when($request->has('sub_category'), function ($query) use ($request) {
+        return $query->where('category_value.id', $request->sub_category);
+    })
+    ->get();
+
 ```

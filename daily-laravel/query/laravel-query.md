@@ -142,3 +142,78 @@ $record->forceDelete();
 ```
 
 Dengan langkah-langkah di atas, Anda dapat menggunakan fitur soft deletes di Laravel untuk mengelola penghapusan data secara lebih aman dan reversible. Ingatlah bahwa fitur soft deletes hanya berlaku jika Anda menggunakan model Eloquent untuk mengakses data.
+
+###### Relatioan belongsto dan hasMany:
+
+Ya, Anda perlu menuliskan relasi `hasMany` pada model `CategorySample` jika Anda sudah menulis relasi `belongsTo` pada model `Parameter`. Ini adalah bagian penting dari konsep relasi dalam Eloquent di Laravel.
+
+Relasi `belongsTo` digunakan untuk menunjukkan bahwa model saat ini "dimiliki oleh" model lain. Ini berarti bahwa dalam model `Parameter`, Anda menyatakan bahwa setiap instance `Parameter` memiliki relasi dengan satu `CategorySample` (sebagai pemiliknya).
+
+Namun, jika Anda ingin mengakses semua parameter yang terkait dengan suatu `CategorySample`, Anda harus menentukan relasi `hasMany` pada model `CategorySample`. Ini akan memungkinkan Anda mengambil semua instance `Parameter` yang terkait dengan satu `CategorySample`.
+
+Jadi, untuk contoh Anda, penulisan yang Anda sebutkan adalah benar:
+
+**Model Parameter:**
+
+```php
+class Parameter extends Model
+{
+    public function categorySample()
+    {
+        return $this->belongsTo(CategorySample::class, 'category_sample', 'id');
+    }
+}
+```
+
+**Model CategorySample:**
+
+```php
+class CategorySample extends Model
+{
+    public function relatedParameters()
+    {
+        return $this->hasMany(Parameter::class, 'parameter', 'id_category_sample');
+    }
+}
+```
+
+Dengan adanya relasi `hasMany` pada `CategorySample`, Anda akan dapat mengambil semua instance `Parameter` yang terkait dengan satu `CategorySample`. Ini memungkinkan Anda melakukan operasi yang lebih kompleks dan fleksibel terkait dengan hubungan antara model-model tersebut.
+
+###### handle error di query yang berelasi dengan try-cath:
+
+Di dalam sebuah transaksi menggunakan `DB::transaction()`, Anda tidak perlu menuliskan blok `try-catch` untuk mengatur commit atau rollback. Jika ada pengecualian (exception) dilemparkan dalam transaksi, Laravel secara otomatis akan melakukan rollback transaksi. Jika tidak ada pengecualian, maka transaksi akan di-commit secara otomatis.
+
+Namun, jika Anda ingin menangkap pengecualian dan melakukan tindakan tertentu berdasarkan jenis pengecualian yang dilemparkan, Anda masih dapat menambahkan blok `try-catch` di dalam transaksi. Contoh:
+
+```php
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+
+try {
+    DB::transaction(function () use ($userId, $newAddress) {
+        $user = User::find($userId);
+        $profile = $user->profile;
+
+        if ($profile) {
+            $user->update([
+                // Update fields in User model
+            ]);
+
+            $profile->update([
+                'address' => $newAddress,
+                // Update fields in Profile model
+            ]);
+        }
+    });
+} catch (QueryException $e) {
+    // Tangani pengecualian khusus dari query yang gagal
+    // Misalnya, lakukan log atau tindakan lain
+} catch (\Exception $e) {
+    // Tangani pengecualian umum
+    // Misalnya, lakukan log atau tindakan lain
+}
+```
+
+Jika Anda hanya ingin menggunakan commit dan rollback default Laravel, Anda tidak perlu menambahkan blok `try-catch`. Laravel akan mengelola transaksi dan rollback secara otomatis jika pengecualian terjadi.
+
+Namun, jika Anda ingin mengambil tindakan tertentu tergantung pada jenis pengecualian yang dilemparkan (seperti menangani QueryException secara berbeda dari Exception umum), maka Anda dapat menambahkan blok `try-catch` seperti contoh di atas.
