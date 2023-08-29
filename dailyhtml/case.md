@@ -31,3 +31,10 @@
                                     </script>
                                 </div>
 ```
+
+```html
+<input type="text" class="form-control autonumber" data-a-sign="%"
+                                                    data-p-sign="s" name="disc_non_air" id="disc_non_air" step="any">
+<input type="text" class="form-control rupiah" name="cash_discount"
+                                                    id="cash_discount" data-a-sign="Rp. " step="any">
+```
