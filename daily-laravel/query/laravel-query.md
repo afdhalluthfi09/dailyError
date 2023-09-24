@@ -220,7 +220,6 @@ Namun, jika Anda ingin mengambil tindakan tertentu tergantung pada jenis pengecu
 
 ###### Jika Menggunakan One To One Tidak bisa akses property Id dengan cara new Resource()
 
-
 Pesan error "Property [id] does not exist on this collection instance" menunjukkan bahwa Anda sedang mencoba mengakses properti `id` pada sebuah instance koleksi (collection), tetapi properti `id` tidak ada dalam instance tersebut. Pesan ini muncul ketika Anda mencoba mengakses properti `id` pada koleksi data, bukan pada objek tunggal.
 
 Dari kode yang Anda berikan, tampaknya ada penggunaan resource KurikulumResource yang diterapkan pada relasi kurikulum pada resource utama. Anda mungkin menghadapi masalah ini jika hubungan antara model tersebut adalah One-to-Many, yang mengembalikan koleksi data (banyak objek), bukan objek tunggal.
@@ -264,3 +263,28 @@ public function toArray($request)
 Perhatikan bahwa saya menggunakan `KurikulumResource::collection()` untuk mengubah koleksi `kurikulum` menjadi resource collection dalam array hasil.
 
 Namun, jika Anda ingin mengakses properti `id` dari objek tunggal yang di-load dari relasi kurikulum, pastikan bahwa ini adalah relasi One-to-One atau Many-to-One yang mengembalikan objek tunggal, bukan koleksi data. Jika relasinya adalah One-to-Many, maka properti `id` harus ada dalam resource KurikulumResource saat mengakses koleksi `kurikulum`.
+
+###### cara melakukan debug untuk query get yang hasilnya adalah collection
+
+```php
+public function kelasByCatgeory($request = null)
+{
+    try {
+        $namakatgeory = 'offline';
+        $query = $this->model->ofWith()
+            ->whereHas('categorise', function ($query) use ($namakatgeory) {
+                $query->where('name', $namakatgeory);
+            })
+            ->get();
+
+        if ($query->isEmpty()) {
+            return null;
+        } else {
+            dd($query);
+        }
+    } catch (\Throwable $th) {
+        dd($th);
+    }
+}
+
+```
