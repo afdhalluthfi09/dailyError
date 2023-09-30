@@ -76,7 +76,7 @@ public function hari($tanggal){
             case 'Sat':
                 $hari_ini = "Sabtu";
             break;
-    
+  
             default:
                 $hari_ini = "Tidak di ketahui";
             break;
@@ -298,5 +298,30 @@ $data = $conn->setConnection($this->db)
         return $query->where('category_value.id', $request->sub_category);
     })
     ->get();
+
+```
+
+##### Cara append data di form seriliaze()
+
+```javascript
+else if (mode == 'review') {
+    $("#review").modal("show");
+    // submit
+    console.log($('#form-review'));
+    $('#form-review').on('submit', function (e) {
+        e.preventDefault();
+
+        // Serialize the form data as an array
+        let formDataArray = $('#form-review').serializeArray();
+
+        // Add custom data to the array
+        formDataArray.push({ name: 'dataId', value: data.id });
+
+        // Serialize the modified array back to a query string
+        let dataForm = $.param(formDataArray);
+
+        console.log(dataForm);
+    });
+}
 
 ```
