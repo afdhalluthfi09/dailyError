@@ -76,7 +76,7 @@ public function hari($tanggal){
             case 'Sat':
                 $hari_ini = "Sabtu";
             break;
-    
+  
             default:
                 $hari_ini = "Tidak di ketahui";
             break;
@@ -300,3 +300,290 @@ $data = $conn->setConnection($this->db)
     ->get();
 
 ```
+
+##### Proses Input Multiple Insert Dari Design Data Untill Save Data
+
+process logic input data:
+
+```
+try {
+                $db = DATE('Y', \strtotime($request->tgl_order));
+
+                if(isset($request->periode) && $request->periode != null){
+                    $temptInsert=[];
+                    $a = 0;
+              
+                    $no_urut = explode('/',$request->no_quotation);
+                    // if($cek!=null) $no_urut = (int)$cek->no_quotation + 1;
+                    $no_baru = sprintf('%05d', ($no_urut[3]));
+                    $no_document = $no_urut[1].'/'.DATE('y', \strtotime($request->tgl_order)).'-'.self::romawi(DATE('m', \strtotime($request->tgl_order))).'/'.$no_baru;
+                    // END
+
+                    foreach($request->periode as $keys => $value)
+                    {
+                        $tambahan =[];
+                        if(isset($request->tambahan) && $request->tambahan != null){
+                            foreach($request->tambahan[$a] as $key => $val){
+                                array_push($tambahan,$val);
+                            }
+                        }
+                        $keterangan_lain =[];
+                        if(isset($request->keterangan_lain) && $request->keterangan_lain != null){
+                            foreach($request->keterangan_lain[$a] as $key => $val){
+                                array_push($keterangan_lain,$val);
+                            }
+                        }
+                        $temptInsert[$a] =[
+                            'no_document'=>$no_document,
+                            'no_quotation'=>$request->no_quotation,
+                            'opsi_1'=>$request->tanggal_sampling[$a][0].' '.$request->jam_sampling[$a][0],
+                            'opsi_2'=>$request->tanggal_sampling[$a][1].' '.$request->jam_sampling[$a][1],
+                            'opsi_3'=>$request->tanggal_sampling[$a][2].' '.$request->jam_sampling[$a][2],
+                            'tambahan'=>json_encode($tambahan),
+                            'keterangan_lain'=>json_encode($keterangan_lain),
+                            'periode_kontrak'=>$value,
+                            'add_by'=>$this->userid,
+                            'add_at'=>$this->globaldate
+                        ];
+                        $a++;
+                    }
+                    $insert = DB::connection($db)->table('sampling_plan')->insert($temptInsert);
+                }
+                if($insert){
+                    if($request->status_quotation == 'non_kontrak'){
+                        $type='QT';
+                        $conn_quot = new RequestQuotation;
+                        $datau = $conn_quot->setConnection($db)->where('no_document', $request->no_quotation)->where('active', 0)->first();
+                        $datau->flag_status = 'sp';
+                        $datau->save();
+                    }elseif($request->status_quotation == 'kontrak'){
+                        $type='QTC';
+                        $conn_quot = new RequestQuotationKontrakH;
+                        $datau = $conn_quot->setConnection($db)->where('no_document', $request->no_quotation)->where('active', 0)->first();
+                        $datau->flag_status = 'sp';
+                        $datau->save();
+                    }
+                }
+
+                $this->resultx = 'Add Request Sampling Plan Success';
+                return response()->json([
+                    'message' => $this->resultx,
+                    'status' => 200
+                ], 200);
+          
+            } catch (\Exception $th) {
+                //throw $th;
+                dd($th);
+            }
+```
+
+model frontend input data dengan konsep render:
+
+```javascript
+var html = ""  
+                $.when(getApi('detail_kontrak', rowData.id, rowData.tgl_order))
+                    .then((response)=> {
+                        var renderAccordion = `<div class="modal-body">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <input type="hidden" name="no_quotation" id="no_quotation_kontrak">
+                                    <input type="hidden" name="tgl_order" id="tgl_order_kontrak">
+                                    <input type="hidden" name="status_quotation" id="status_quotation" value="kontrak">
+                                </div>
+                            </div>
+                            <div id="accordion">`;
+                                var opt =response.data;
+                                opt.forEach((value) => {
+                                    var dataOpt=JSON.parse(value.data_pendukung_sampling)
+                                    for (var key in dataOpt) {
+                                        var x = (key-1);
+                                        if (dataOpt.hasOwnProperty(key)) {
+                                            var periodeKontrak = new Date(dataOpt[key].periode_kontrak);
+                                            var monthNames = [
+                                            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                                            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+                                            ];
+                                            renderAccordion +=`<div class="card">
+                                                    <div class="card-header" id="heading${x}">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapse${x}" aria-expanded="false" aria-controls="collapse${x}">
+                                                              Periode Kontrak Di : ${monthNames[periodeKontrak.getMonth()]}
+                                                              <input type="hidden" name="periode[${x}]" value="${monthNames[periodeKontrak.getMonth()]}"/>
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+
+                                                <div id="collapse${x}" class="collapse" aria-labelledby="heading${x}" data-parent="#accordion">
+                                                <div class="card-body">
+                                                    <div class="prism-show-language tambahan">
+                                                        <div class="prism-show-language-label">Opsi 1</div>
+                                                        <div class="form-group">
+                                                            <label for="Tanggal Sampling">Tanggal Sampling</label>
+                                                            <input type="text" name="tanggal_sampling[${x}][]" id="tanggal_sampling_kontrak" class="form-control tgl_picker_kontak"required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Jam Sampling">Jam Sampling</label>
+                                                            <input type="text" name="jam_sampling[${x}][]" id="jam_sampling_kontrak" class="form-control time_pick_kontrak"required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="prism-show-language tambahan">
+                                                        <div class="prism-show-language-label">Opsi 2</div>
+                                                        <div class="form-group">
+                                                            <label for="Tanggal Sampling">Tanggal Sampling</label>
+                                                            <input type="text" name="tanggal_sampling[${x}][]" id="tanggal_sampling_kontrak" class="form-control tgl_picker_kontak">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Jam Sampling">Jam Sampling</label>
+                                                            <input type="text" name="jam_sampling[${x}][]" id="jam_sampling_kontrak" class="form-control time_pick_kontrak">
+                                                        </div>
+                                                    </div>
+                                                    <div class="prism-show-language tambahan">
+                                                        <div class="prism-show-language-label">Opsi 3</div>
+                                                        <div class="form-group">
+                                                            <label for="Tanggal Sampling">Tanggal Sampling</label>
+                                                            <input type="text" name="tanggal_sampling[${x}][]" id="tanggal_sampling_kontrak" class="form-control tgl_picker_kontak">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="Jam Sampling">Jam Sampling</label>
+                                                            <input type="text" name="jam_sampling[${x}][]" id="jam_sampling_kontrak" class="form-control time_pick_kontrak">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col-md-12">
+                                                            <label for="">Tambahan</label>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="GENSET" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>GENSET</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="SARUNG TANGAN ( LATEX )" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>SARUNG TANGAN ( LATEX )</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="MASKER" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>MASKER</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="SARUNG TANGAN ( KAIN )" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>SARUNG TANGAN ( KAIN )</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="FACE SHIELD" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>FACE SHIELD</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="WORKING PERMIT" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>WORKING PERMIT</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <div class="checkbox-zoom zoom-success">
+                                                                <label>
+                                                                    <input type="checkbox" value="APD LENGKAP" name="tambahan[${x}][]">
+                                                                    <span class="cr">
+                                                                        <i class="cr-icon icofont icofont-ui-check txt-default"></i>
+                                                                    </span>
+                                                                    <span>APD LENGKAP</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="col-md-12">
+                                                            <label for="">Keterangan Lain</label>
+                                                        </div>
+                                                        <div class="col-md-12 mb-2">
+                                                            <input type="text" name="keterangan_lain[${x}][]" id="keterangan_lain" class="form-control">
+                                                        </div>
+                                                        <div class="col-md-12 mb-2">
+                                                            <input type="text" name="keterangan_lain[${x}][]" id="keterangan_lain" class="form-control">
+                                                        </div>
+                                                        <div class="col-md-12 mb-2">
+                                                            <input type="text" name="keterangan_lain[${x}][]" id="keterangan_lain" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`;
+                                        }
+                                    }
+                                });
+                        
+                        renderAccordion +=`</div></div><div class="modal-footer">
+                            <button class="btn btn-danger" type="reset" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>`;
+                        $('#form_sp_kontrak').html(renderAccordion);
+                        $('.tgl_picker_kontak').daterangepicker({
+                            singleDatePicker: true,
+                            showDropdowns: true,
+                            minYear: 2000,
+                            locale: {
+                                format: 'YYYY-MM-DD',
+                            }
+                        })
+                        $('.time_pick_kontrak').daterangepicker({
+                            singleDatePicker: true,
+                            timePicker: true,
+                            timePicker24Hour: true,
+                            timePickerIncrement: 1,
+                            timePickerSeconds: true,
+                            locale: {
+                                format: 'HH:mm'
+                            }
+                        }).on('show.daterangepicker', function (ev, picker) {
+                            picker.container.find(".calendar-table").hide();
+                        });
+                        $('#no_quotation_kontrak').val(rowData.no_document)
+                        $('#tgl_order_kontrak').val(rowData.tgl_order)
+
+                    })
+                $('#req_sampling_plan_kontrak').modal('show');
+```
+
+Model Tampilan:
+![1696466790395](image/case/1696466790395.png)
+
+![1696466825189](image/case/1696466825189.png)
