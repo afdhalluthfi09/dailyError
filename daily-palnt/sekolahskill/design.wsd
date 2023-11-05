@@ -1,0 +1,26 @@
+@startuml event
+    entity "Event" as event {
+        * id : int
+        --
+        * judul : string
+        * type : string
+        * pengsisi_acara : string
+        * tanggal_acara : string
+        * lokasi : string
+        * deskripsi : string
+        * photo : string
+    }
+    entity "peserta_event" as user {
+        * id : int
+        --
+        * id_event : int
+        * nama : string
+        * status_kerja : string
+        * tempat_kerja : string
+        * alamat : string
+        * umur : int
+        * email : string
+        * status_payment : int
+    }
+    event ||..o{ user
+@enduml
