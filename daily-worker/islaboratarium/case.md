@@ -301,6 +301,7 @@ $data = $conn->setConnection($this->db)
 
 ```
 
+<<<<<<< HEAD
 ##### Proses Input Multiple Insert Dari Design Data Untill Save Data
 
 process logic input data:
@@ -587,3 +588,29 @@ Model Tampilan:
 ![1696466790395](image/case/1696466790395.png)
 
 ![1696466825189](image/case/1696466825189.png)
+=======
+##### Cara append data di form seriliaze()
+
+```javascript
+else if (mode == 'review') {
+    $("#review").modal("show");
+    // submit
+    console.log($('#form-review'));
+    $('#form-review').on('submit', function (e) {
+        e.preventDefault();
+
+        // Serialize the form data as an array
+        let formDataArray = $('#form-review').serializeArray();
+
+        // Add custom data to the array
+        formDataArray.push({ name: 'dataId', value: data.id });
+
+        // Serialize the modified array back to a query string
+        let dataForm = $.param(formDataArray);
+
+        console.log(dataForm);
+    });
+}
+
+```
+>>>>>>> 9c37cad9d8550a13af7e2d3287c0890e898bae14
