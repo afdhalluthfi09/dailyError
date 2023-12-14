@@ -51,16 +51,16 @@ disbale click
 ```
 
 
-// document.onkeydown = function(e) {
-//     if (e.ctrlKey && 
-//         (e.keyCode === 67 || 
-//             e.keyCode === 86 || 
-//             e.keyCode === 85 || 
-//             e.keyCode === 117)) {
-//         return false;
-//     } else {
-//         return true;
-//     }
+document.onkeydown = function(e) {
+     if (e.ctrlKey && 
+         (e.keyCode === 67 || 
+             e.keyCode === 86 || 
+             e.keyCode === 85 || 
+             e.keyCode === 117)) {
+         return false;
+     } else {
+         return true;
+     }
 
 
 // };
@@ -88,4 +88,11 @@ disbale click
     // }
 
     //document.addEventListener('contextmenu', event => event.preventDefault());
+```
+###### currency mata uang menjadi format IDR Rp.
+
+```
+function formatDollar(number){
+    return new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR'}).format(number);
+}
 ```
