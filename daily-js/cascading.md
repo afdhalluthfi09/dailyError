@@ -63,31 +63,31 @@ document.onkeydown = function(e) {
      }
 
 
-// };
-// $(document).keypress("u",function(e) {
-//   if(e.ctrlKey)
-//   { return false;}
-//   else{
-//     return true;
-//   }
-// });
+};
+$(document).keypress("u",function(e) {
+  if(e.ctrlKey)
+  { return false;}
+  else{
+    return true;
+  }
+});
 
- // if (!$('body').hasClass('debug_mode')) {
-    //     var _z = console;
-    //     Object.defineProperty(window, "console", {
-    //         get: function () {
-    //             if ((window && window._z && window._z._commandLineAPI) || {}) {
-    //                 throw "Nice trick! but not permitted!";
-    //             }
-    //             return _z;
-    //         },
-    //         set: function (val) {
-    //             _z = val;
-    //         }
-    //     });
-    // }
+ if (!$('body').hasClass('debug_mode')) {
+        var _z = console;
+        Object.defineProperty(window, "console", {
+            get: function () {
+                if ((window && window._z && window._z._commandLineAPI) || {}) {
+                    throw "Nice trick! but not permitted!";
+                }
+                return _z;
+            },
+            set: function (val) {
+                _z = val;
+            }
+        });
+    }
 
-    //document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('contextmenu', event => event.preventDefault());
 ```
 ###### currency mata uang menjadi format IDR Rp.
 
