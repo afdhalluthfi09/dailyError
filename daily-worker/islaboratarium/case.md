@@ -47,43 +47,43 @@ function formatDate(dt){
 ```php
 public function hari($tanggal){
         $hari = date ("D", strtotime($tanggal));
-   
+
         switch($hari){
             case 'Sun':
                 $hari_ini = "Minggu";
             break;
-   
+
             case 'Mon':
                 $hari_ini = "Senin";
             break;
-   
+
             case 'Tue':
                 $hari_ini = "Selasa";
             break;
-   
+
             case 'Wed':
                 $hari_ini = "Rabu";
             break;
-   
+
             case 'Thu':
                 $hari_ini = "Kamis";
             break;
-   
+
             case 'Fri':
                 $hari_ini = "Jumat";
             break;
-   
+
             case 'Sat':
                 $hari_ini = "Sabtu";
             break;
-  
+
             default:
                 $hari_ini = "Tidak di ketahui";
             break;
         }
-   
+
         return $hari_ini;
-   
+
     }
 ```
 
@@ -215,7 +215,7 @@ $(document).on('click', '#removeRow', function () {
 //inisialisasi
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
-  
+
 $sheet->mergeCells('A1:A2');
 $sheet->getStyle('A1:A2')->getAlignment()->setVertical('center');
 $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal('center');
@@ -237,10 +237,10 @@ $sheet->getStyle('E:F')->getAlignment()->setHorizontal('center');
 $sheet->mergeCells('G1:I1');
 $sheet->getStyle('G:I')->getAlignment()->setHorizontal('center');
 $sheet->getColumnDimension('I')->setWidth(25);
-  
+
 $sheet->getStyle('A1:I1')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 $sheet->getStyle('A2:I2')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
-  
+
 $sheet->setCellValue('A1', 'No');
 $sheet->setCellValue('B1', 'Nama Karyawan');
 $sheet->setCellValue('C1', 'Tanggal');
@@ -301,7 +301,6 @@ $data = $conn->setConnection($this->db)
 
 ```
 
-<<<<<<< HEAD
 ##### Proses Input Multiple Insert Dari Design Data Untill Save Data
 
 process logic input data:
@@ -313,7 +312,7 @@ try {
                 if(isset($request->periode) && $request->periode != null){
                     $temptInsert=[];
                     $a = 0;
-              
+            
                     $no_urut = explode('/',$request->no_quotation);
                     // if($cek!=null) $no_urut = (int)$cek->no_quotation + 1;
                     $no_baru = sprintf('%05d', ($no_urut[3]));
@@ -371,7 +370,7 @@ try {
                     'message' => $this->resultx,
                     'status' => 200
                 ], 200);
-          
+        
             } catch (\Exception $th) {
                 //throw $th;
                 dd($th);
@@ -551,7 +550,7 @@ var html = ""
                                         }
                                     }
                                 });
-                        
+                      
                         renderAccordion +=`</div></div><div class="modal-footer">
                             <button class="btn btn-danger" type="reset" data-dismiss="modal">Close</button>
                             <button class="btn btn-primary" type="submit">Save</button>
@@ -587,8 +586,6 @@ var html = ""
 Model Tampilan:
 ![1696466790395](image/case/1696466790395.png)
 
-![1696466825189](image/case/1696466825189.png)
-=======
 ##### Cara append data di form seriliaze()
 
 ```javascript
@@ -613,4 +610,63 @@ else if (mode == 'review') {
 }
 
 ```
->>>>>>> 9c37cad9d8550a13af7e2d3287c0890e898bae14
+# Penggunaan consumApi multiple
+
+```javascript
+var getApi = function (mode = null, id = null, data1 = null, data2 = null, data3 = null) {
+        var deferred = $.Deferred();
+        if (mode == 'permision') {
+
+        }else if (mode == 'statususer') {
+            $.ajax({
+                url: global_var('dpath') + 'statususer',
+                method: 'POST',
+                dataType: 'Json',
+                headers: { token: getCookie('token') },
+                success: function (response) {
+                    deferred.resolve(response);
+                },
+                error: function (error) {
+                    deferred.reject(error);
+                }
+            })
+        }
+
+        return deferred.promise();
+    }
+/*penggunaanya*/
+$.when(getApi('statususer')).then(function (value) {
+            var _user = $.map(value.data, function (e) {
+                if (e.jabatan == 'Sampler') {
+                    return {
+                        id: e.id + ',' + e.nama_lengkap,
+                        text: e.nama_lengkap
+                    }
+                }
+            })
+
+            $('#sampler').select2({
+                data: _user,
+                placeholder: "Select Sampler",
+                multiple: true,
+            })
+            $('#sampler2').select2({
+                data: _user,
+                placeholder: "Select Sampler",
+                dropdownParent: $("#cuti_")
+            })
+            $('#sampler-parsial').select2({
+                data: _user,
+                placeholder: "Select Sampler",
+                multiple: true,
+                dropdownParent: $('#parsial')
+            })
+
+            // $('#nama_sampler').prepend('<option selected=""></option>').select2({
+            //     data:_user,
+            //     placeholder: "Select Sampler",
+            //     // dropdownParent: $('#parsial')
+            // })
+        })
+
+```
