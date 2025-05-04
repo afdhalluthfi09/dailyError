@@ -1,0 +1,210 @@
+{
+    "github.copilot.editor.enableAutoCompletions": true,
+    "workbench.editorAssociations": {
+        "*.copilotmd": "vscode.markdown.preview.editor"
+    },
+
+
+    "editor.copyWithSyntaxHighlighting": false,
+    "diffEditor.ignoreTrimWhitespace": true,
+    "editor.emptySelectionClipboard": false,
+    "workbench.editor.enablePreview": false,
+    //==
+    "workbench.enableExperiments": false,
+    "update.mode": "none",
+    "window.newWindowDimensions": "inherit",
+    "editor.multiCursorModifier": "ctrlCmd",
+    "files.trimTrailingWhitespace": true,
+    "diffEditor.renderSideBySide": false,
+    "editor.snippetSuggestions": "top",
+    "editor.detectIndentation": false,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.minimap.enabled": false,
+    "editor.lineNumbers": "on",
+    "editor.guides.indentation": false,
+    "scm.diffDecorations": "none",
+    "editor.hover.delay": 1500,
+    "editor.hover.enabled": true,
+    "editor.matchBrackets": "never",
+    "workbench.tips.enabled": false,
+    "editor.colorDecorators": false,
+    "git.decorations.enabled": false,
+    "workbench.startupEditor": "none",
+    "editor.lightbulb.enabled": "off",
+    "editor.selectionHighlight": false,
+    "editor.overviewRulerBorder": false,
+    "editor.renderLineHighlight": "none",
+    "editor.occurrencesHighlight": "off",
+    "problems.decorations.enabled": false,
+    "editor.renderControlCharacters": false,
+    "editor.hideCursorInOverviewRuler": true,
+    "editor.gotoLocation.multipleReferences": "goto",
+    "editor.gotoLocation.multipleDefinitions": "goto",
+    "editor.gotoLocation.multipleDeclarations": "goto",
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "editor.gotoLocation.multipleImplementations": "goto",
+    "editor.gotoLocation.multipleTypeDefinitions": "goto",
+
+    // Typography
+    "editor.fontFamily": "Fira Code, Geist Mono, JetBrains Mono",
+    "editor.suggestFontSize": 16,
+    "editor.suggestLineHeight": 30,
+    "terminal.integrated.lineHeight": 1.5,
+    "terminal.integrated.fontSize": 16,
+
+    "search.useIgnoreFiles": false,
+    "search.exclude": {
+        // Hide everything in /vendor, except the "laravel" and "livewire" folder.
+        "**/vendor/{[^l],?[^ai]}*": true,
+        // Hide everything in /public, except "index.php"
+        "**/public/{[^i],?[^n]}*": true,
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/_ide_helper.php": true,
+        "**/composer.lock": true,
+        "**/package-lock.json": true,
+        "storage": true,
+        ".phpunit.result.cache": true
+    },
+
+    /**
+    * Code
+    **/
+    // Include "-" in word selection.
+    "editor.wordSeparators": "`~!@#%^&*()=+[{]}\\|;:'\",.<>/?",
+    "emmet.includeLanguages": {
+        "blade": "html",
+        "vue-html": "html",
+        "vue": "html",
+        "react": "html",
+        "javascript": "html"
+    },
+    "files.associations": {
+        ".php_cs": "php",
+        ".php_cs.dist": "php"
+    },
+
+    /**
+    * PHP
+    **/
+    "php.suggest.basic": false,
+
+    /**
+    * Prettier
+    **/
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[tailwindcss]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "explorer.sortOrder": "type",
+    "vetur.format.options.tabSize": 4,
+    "workbench.tree.indent": 15,
+    "[html]": {
+        "editor.defaultFormatter": "apility.beautify-blade",
+        "editor.formatOnSave": true
+    },
+    "editor.wordWrapColumn": 120,
+    "files.autoSave": "afterDelay",
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+
+    "editor.quickSuggestions": {
+        "strings": true
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "editor.linkedEditing": true,
+    "editor.formatOnSave": false,
+    // "editor.fontLigatures": false,
+    "editor.fontLigatures": "'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'calt', 'dlig'",
+    "diffEditor.wordWrap": "on",
+    "notebook.output.wordWrap": true,
+    "editor.fontSize": 16,
+    "editor.minimap.maxColumn": 250,
+    "explorer.confirmDelete": false,
+    "editor.accessibilitySupport": "off",
+    "chat.editor.wordWrap": "on",
+    "editor.wordWrap": "wordWrapColumn",
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+    "editor.fontWeight": "400",
+    "workbench.activityBar.location": "top",
+    "workbench.statusBar.visible": true,
+    "editor.inlineSuggest.suppressSuggestions": true,
+    "editor.padding.top": 16,
+    "editor.cursorBlinking": "solid",
+    "editor.stickyScroll.enabled": false,
+    "editor.lineHeight": 32,
+
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+              "scope": [
+                "comment",
+                "keyword",
+                "variable.language",
+                "entity.other.attribute-name.html",
+                "entity.other.attribute-name",
+                "keyword.control",
+                "storage.type",
+                "comment",
+                "comment.block",
+                "comment.line"
+              ],
+              "settings": {
+                "fontStyle": ""
+              }
+            }
+          ]
+    },
+    "vscode_custom_css.imports": [
+
+        "file:///media/sukalupa/01991145-a29b-4a76-af2b-e590b92f7c15/luthfi/Documents/sites/vscode-setting/custom-vscode.css",
+        "file:///media/sukalupa/01991145-a29b-4a76-af2b-e590b92f7c15/luthfi/Documents/sites/vscode-setting/vscode-script.js"
+    ],
+    "workbench.sideBar.location": "right",
+    "workbench.tree.enableStickyScroll": false,
+    "window.customTitleBarVisibility": "auto",
+    "workbench.productIconTheme": "fluent-icons",
+    "RainbowBrackets.depreciation-notice": false,
+    "terminal.external.windowsExec": "C:\\Users\\Lutfi\\AppData\\Local\\Programs\\Hyper\\Hyper.exe",
+    "terminal.integrated.tabs.defaultIcon": "github",
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "workbench.colorTheme": "GitHub Dark Dimmed",
+    "terminal.integrated.env.linux": {},
+    "settingsSync.ignoredSettings": [
+
+    ],
+    "settingsSync.ignoredExtensions": [
+
+    ],
+    "workbench.iconTheme": "vscode-icons",
+    "remote.SSH.remotePlatform": {
+        "10.88.8.80": "linux"
+    }
+}
