@@ -32,7 +32,7 @@ Client:
  Version:           20.10.21
  API version:       1.41
  Go version:        go1.18.7
- Git commit:      
+ Git commit:
  Built:             Tue Oct 25 18:01:18 2022
  OS/Arch:           darwin/arm64
  Context:           default
@@ -43,19 +43,19 @@ Server: Docker Desktop 4.15.0 (93002)
   Version:          20.10.21
   API version:      1.41 (minimum version 1.12)
   Go version:       go1.18.7
-  Git commit:     
+  Git commit:
   Built:            Tue Oct 25 17:59:41 2022
   OS/Arch:          linux/arm64
   Experimental:     false
  containerd:
   Version:          1.6.10
-  GitCommit:      
+  GitCommit:
  runc:
   Version:          1.1.4
-  GitCommit:      
+  GitCommit:
  docker-init:
   Version:          0.19.0
-  GitCommit:      
+  GitCommit:
 ```
 
 ###### Docker Image
@@ -273,3 +273,153 @@ docker-compose up -d
 Dengan langkah-langkah di atas, Anda telah menginstal Docker, Docker Compose, Laravel, dan Vue.js dalam lingkungan Docker pada Ubuntu 22.04. Anda sekarang dapat mengakses aplikasi Laravel dan Vue.js Anda melalui browser dengan alamat `http://localhost:9000`.
 
 Pastikan untuk mengacu pada dokumentasi resmi Docker, Laravel, dan Vue.js untuk informasi lebih lanjut tentang pengaturan dan pengembangan lebih lanjut.
+
+###### Setting Docker 2025
+
+pada tahun ini menggunakan konsep satu racikan docker menjalankan banyak aplikasi, skenarionya seperti ini, sebut aja ex: project sekolahskill dimana di dalamnya ada api-skill,sekolahskill,manage-sekolahskill disana nantinya juga ada docker-compose.yml
+project-sekolahskill/
+   ->api-skill/
+   ->sekolahskill/
+   ->manage-sekolahskill/
+   ->docker-compose.yml
+tujuanya agar aplikasi berjalan dengan satu docker sehingga satu komunikasi,satu flow pengembangan,dan maintenance yang seragam adapun isinya docker compse yml-nya begini:
+
+```yml
+services:
+  # Database Terpisah
+  db:
+    image: mysql:8.0
+    container_name: skill-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: skill
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - skill-network
+
+  # Backend (Laravel)
+  api:
+    build:
+      context: ./api-skill
+      dockerfile: docker/php/Dockerfile
+    container_name: api-skill
+    volumes:
+      - ./api-skill:/var/www
+    depends_on:
+      - db
+    networks:
+      - skill-network
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx-skill
+    ports:
+      - "8080:80"
+    volumes:
+      - ./api-skill:/var/www
+      - ./api-skill/docker/nginx/default.conf:/etc/nginx/conf.d/default.conf # 4. Arahkan ke config di subfolder
+    depends_on:
+      - api
+    networks:
+      - skill-network
+
+  # Frontend User
+  # frontend:
+  #   build:
+  #     context: ./sekolahskill
+  #   container_name: frontend-user
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - skill-network
+
+  # Frontend Admin
+  # admin:
+  #   build:
+  #     context: ./manage-sekolahskill
+  #   container_name: frontend-admin
+  #   ports:
+  #     - "3001:3000"
+  #   networks:
+  #     - skill-network
+
+networks:
+  skill-network:
+    driver: bridge
+
+volumes:
+  db-data:
+```
+
+dan untuk tiap **dockerfilenya** ada di dalam tiap subfolder itu sendiri saat ini baru berjalan ada di sub folde api-skill:
+docker/php/Dockerfile
+
+```docker
+FROM php:8.1-fpm-bookworm
+
+# System dependencies (sekali saja)
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    libicu-dev \
+    zip \
+    unzip \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip \
+    intl
+
+# Redis
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+```
+
+docker/nginx/default.conf
+
+```conf
+server {
+    listen 80;
+    index index.php index.html;
+    root /var/www/public;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass api:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+    }
+
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
